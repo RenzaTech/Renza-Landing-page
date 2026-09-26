@@ -256,9 +256,9 @@ export default function WhyRenza() {
         {/* Compact Alternating S-Curve Timeline with Clean 3D Cards */}
         {/* ======================================================== */}
         <div ref={cardsContainerRef} className="relative max-w-4xl mx-auto">
-          {/* Animated Compact S-Shaped Serpentine SVG Line (Desktop Only) */}
+          {/* SVG line + milestone dots — all in one coordinate space (Desktop only) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 top-4 bottom-6 w-36 pointer-events-none hidden md:block z-0"
+            className="absolute left-1/2 -translate-x-1/2 top-4 bottom-6 w-36 pointer-events-none hidden md:block z-20"
             aria-hidden="true"
           >
             <svg
@@ -273,31 +273,51 @@ export default function WhyRenza() {
                   <stop offset="50%" stopColor="#00b8ab" stopOpacity="1" />
                   <stop offset="100%" stopColor="#00D2C4" stopOpacity="0.8" />
                 </linearGradient>
-                <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="2.5" result="blur" />
+                <filter id="lineGlow" x="-30%" y="-5%" width="160%" height="110%">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+                <filter id="dotGlow" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
               </defs>
 
-              {/* Background guide track */}
+              {/* Dashed background track */}
               <path
                 ref={sPathTrackRef}
                 d="M 50 0 C 20 65, 20 65, 50 130 C 80 195, 80 195, 50 260 C 20 325, 20 325, 50 390 C 80 455, 80 455, 50 520 C 20 585, 20 585, 50 650 C 80 715, 80 715, 50 780"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeDasharray="5 5"
-                className="text-[#00D2C4]/20 dark:text-[#00D2C4]/25"
+                stroke="#00D2C4"
+                strokeWidth="1.5"
+                strokeDasharray="5 6"
+                strokeOpacity="0.18"
               />
 
-              {/* Animated foreground drawing S-curve */}
+              {/* Animated glowing S-curve (draws on scroll via GSAP) */}
               <path
                 ref={sPathRef}
                 d="M 50 0 C 20 65, 20 65, 50 130 C 80 195, 80 195, 50 260 C 20 325, 20 325, 50 390 C 80 455, 80 455, 50 520 C 20 585, 20 585, 50 650 C 80 715, 80 715, 50 780"
                 stroke="url(#sLineGradient)"
-                strokeWidth="3"
+                strokeWidth="2.5"
                 strokeLinecap="round"
                 filter="url(#lineGlow)"
               />
+
+              {/*
+                Milestone dots drawn at the exact bezier anchor points so
+                the line passes through the centre of every node.
+                Path anchors: M 50 0 … 50 130 … 50 260 … 50 390 … 50 520 … 50 650
+              */}
+              {([0, 130, 260, 390, 520, 650] as number[]).map((y, i) => (
+                <g key={i}>
+                  {/* Soft glow halo */}
+                  <circle cx="50" cy={y} r="12" fill="#00D2C4" fillOpacity="0.12" />
+                  {/* Outer ring */}
+                  <circle cx="50" cy={y} r="9" fill="#071313" stroke="#00D2C4" strokeWidth="2.5" />
+                  {/* Inner filled dot */}
+                  <circle cx="50" cy={y} r="4" fill="#00D2C4" />
+                </g>
+              ))}
             </svg>
           </div>
 
@@ -413,11 +433,9 @@ export default function WhyRenza() {
                     </div>
                   </div>
 
-                  {/* ========================================= */}
-                  {/* Central Timeline Milestone Node (Compact)  */}
-                  {/* ========================================= */}
+                  {/* Mobile-only dot — desktop dots are inside the SVG above */}
                   <div
-                    className="timeline-node absolute left-5 md:left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-white dark:bg-[#071313] border-2 border-[#00D2C4] shadow-sm shadow-[#00D2C4]/30 flex items-center justify-center z-20"
+                    className="timeline-node md:hidden absolute left-5 -translate-x-1/2 w-6 h-6 rounded-full bg-white dark:bg-[#071313] border-2 border-[#00D2C4] shadow-sm shadow-[#00D2C4]/30 flex items-center justify-center z-20"
                     aria-hidden="true"
                   >
                     <div className="w-2 h-2 rounded-full bg-[#00D2C4] animate-pulse" />
