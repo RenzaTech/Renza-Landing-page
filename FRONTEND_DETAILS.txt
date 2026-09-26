@@ -163,7 +163,7 @@ d:/Renza Landing Page/
   - Functional Login modal trigger (`components/auth/LoginModal.tsx`):
     * Customer & Helper Partner role switching tabs.
     * Indian 10-digit mobile number entry (+91).
-    * Instant 1-click Quick Demo fill for Customer (Aswin) and Helper (Priya).
+    * Continue with Google 1-click authentication.
     * 4-digit OTP verification screen with auto-focus advance, countdown timer, and paste support.
     * Authenticated user session persistence via `localStorage ('renza_auth_user')`.
   - Logged-in Profile Dropdown:

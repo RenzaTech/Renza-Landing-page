@@ -34,47 +34,7 @@ function GoogleIcon({ className = 'w-5 h-5' }: { className?: string }) {
   );
 }
 
-// Renza circular household helper illustration
-function RenzaIllustration() {
-  return (
-    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-[#00D2C4]/20 via-[#00D2C4]/10 to-emerald-500/10 border border-[#00D2C4]/30 flex items-center justify-center p-2.5 shadow-inner">
-      <svg
-        viewBox="0 0 100 100"
-        className="w-full h-full text-[#00D2C4] drop-shadow-sm"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M 50 18 L 82 44 L 75 44 L 75 80 L 25 80 L 25 44 L 18 44 Z"
-          fill="currentColor"
-          fillOpacity="0.15"
-          stroke="currentColor"
-          strokeWidth="3.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M 42 80 L 42 58 C 42 54 58 54 58 58 L 58 80"
-          stroke="currentColor"
-          strokeWidth="3.5"
-          fill="#071313"
-          fillOpacity="0.4"
-        />
-        <circle cx="50" cy="38" r="4" fill="#00D2C4" />
-        <path
-          d="M 78 22 Q 80 28 86 30 Q 80 32 78 38 Q 76 32 70 30 Q 76 28 78 22 Z"
-          fill="#00D2C4"
-        />
-        <path
-          d="M 22 55 Q 24 60 28 61 Q 24 62 22 67 Q 20 62 16 61 Q 20 60 22 55 Z"
-          fill="#00D2C4"
-          fillOpacity="0.8"
-        />
-        <circle cx="76" cy="65" r="5" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6" />
-        <circle cx="82" cy="55" r="3" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.8" />
-      </svg>
-    </div>
-  );
-}
+
 
 export default function LoginModal({ isOpen, onClose, defaultRole = 'customer' }: LoginModalProps) {
   const [mounted, setMounted] = useState(false);
@@ -143,18 +103,6 @@ export default function LoginModal({ isOpen, onClose, defaultRole = 'customer' }
     const val = e.target.value.replace(/\D/g, '').slice(0, 10);
     setPhone(val);
     if (error) setError('');
-  };
-
-  const handleQuickDemo = (type: 'customer' | 'helper') => {
-    setRole(type);
-    if (type === 'customer') {
-      setName('Aswin Kumar');
-      setPhone('9876543210');
-    } else {
-      setName('Priya Sundaram');
-      setPhone('9812345678');
-    }
-    setError('');
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -319,11 +267,6 @@ export default function LoginModal({ isOpen, onClose, defaultRole = 'customer' }
             {/* Short Underline Bar like reference UI */}
             <div className="w-8 h-[2.5px] bg-slate-900 dark:bg-white mt-3" aria-hidden="true" />
           </div>
-
-          {/* Circular Illustration */}
-          <div className="shrink-0">
-            <RenzaIllustration />
-          </div>
         </div>
 
         {/* Role Selector Pills */}
@@ -451,36 +394,6 @@ export default function LoginModal({ isOpen, onClose, defaultRole = 'customer' }
                 </>
               )}
             </button>
-
-            {/* Instant Demo Fill */}
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80">
-              <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
-                <Sparkles className="w-3.5 h-3.5 text-[#00D2C4]" />
-                <span className="font-semibold uppercase tracking-wider text-[10px]">Instant Demo Fill</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemo('customer')}
-                  className="p-2 text-left border border-slate-200 dark:border-slate-800 hover:border-[#00D2C4] rounded-lg transition-all group cursor-pointer bg-slate-50/50 dark:bg-slate-900/50"
-                >
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#00D2C4]">
-                    Aswin (Customer)
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-mono mt-0.5">9876543210</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemo('helper')}
-                  className="p-2 text-left border border-slate-200 dark:border-slate-800 hover:border-[#00D2C4] rounded-lg transition-all group cursor-pointer bg-slate-50/50 dark:bg-slate-900/50"
-                >
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-[#00D2C4]">
-                    Priya (Helper)
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-mono mt-0.5">9812345678</p>
-                </button>
-              </div>
-            </div>
           </div>
         )}
 
