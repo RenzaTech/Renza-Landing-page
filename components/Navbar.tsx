@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ArrowRight, Sun, Moon } from 'lucide-react';
+import { ArrowRight, Sun, Moon, LogOut, Calendar, ChevronDown, ShieldCheck } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { User, getStoredUser, removeStoredUser, AUTH_CHANGE_EVENT, OPEN_LOGIN_EVENT } from '@/lib/auth';
+import LoginModal from '@/components/auth/LoginModal';
+import BookingsModal from '@/components/auth/BookingsModal';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -14,8 +17,14 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [mounted, setMounted] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isBookingsModalOpen, setIsBookingsModalOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
   const navRef = useRef<HTMLElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   // Initialize theme
   useEffect(() => {
@@ -103,6 +112,41 @@ export default function Navbar() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Listen for auth state changes & login triggers
+  useEffect(() => {
+    setUser(getStoredUser());
+
+    const handleAuthChange = (e: Event) => {
+      const customEvent = e as CustomEvent<User | null>;
+      setUser(customEvent.detail ?? getStoredUser());
+    };
+
+    const handleOpenLogin = () => {
+      setIsLoginModalOpen(true);
+    };
+
+    window.addEventListener(AUTH_CHANGE_EVENT, handleAuthChange);
+    window.addEventListener(OPEN_LOGIN_EVENT, handleOpenLogin);
+
+    return () => {
+      window.removeEventListener(AUTH_CHANGE_EVENT, handleAuthChange);
+      window.removeEventListener(OPEN_LOGIN_EVENT, handleOpenLogin);
+    };
+  }, []);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    if (isProfileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isProfileMenuOpen]);
+
   return (
     <header
       ref={navRef}
@@ -154,16 +198,102 @@ export default function Navbar() {
               )}
             </button>
 
-            <button
-              className={`text-sm font-semibold px-3.5 sm:px-4 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer ${
-                isScrolled
-                  ? 'text-slate-700 dark:text-slate-300 hover:text-[#00D2C4] hover:bg-slate-100 dark:hover:bg-slate-800'
-                  : 'text-white/90 hover:text-white hover:bg-white/10'
-              }`}
-              aria-label="Login to account"
-            >
-              Login
-            </button>
+            {/* Login or User Profile */}
+            {user ? (
+              <div ref={profileMenuRef} className="relative">
+                <button
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  aria-expanded={isProfileMenuOpen}
+                  aria-haspopup="true"
+                  className={`flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 cursor-pointer shadow-sm ${
+                    isScrolled
+                      ? 'border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 hover:border-[#00D2C4]'
+                      : 'border-white/20 bg-white/10 backdrop-blur-md text-white hover:border-[#00D2C4]'
+                  }`}
+                  aria-label="User profile menu"
+                >
+                  <div className="relative w-6 h-6 rounded-full bg-[#00D2C4] text-[#071313] font-bold text-xs flex items-center justify-center">
+                    {user.name.charAt(0).toUpperCase()}
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-white dark:border-[#071313]" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-semibold max-w-[80px] sm:max-w-[110px] truncate">
+                    {user.name.split(' ')[0]}
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    className={`text-slate-400 transition-transform duration-200 ${
+                      isProfileMenuOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-white dark:bg-[#0C1818] border border-slate-200 dark:border-slate-800 shadow-xl shadow-black/25 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800/80 mb-1">
+                      <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{user.name}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">{user.phone}</p>
+                      <div className="mt-1.5 flex items-center gap-1.5">
+                        <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#00D2C4]/15 text-[#00D2C4]">
+                          {user.role === 'customer' ? 'Customer Account' : 'Helper Partner'}
+                        </span>
+                        {user.area && (
+                          <span className="text-[10px] text-slate-400 truncate max-w-[90px]">{user.area}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        setIsBookingsModalOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-left cursor-pointer"
+                    >
+                      <Calendar size={14} className="text-[#00D2C4]" />
+                      <span>{user.role === 'customer' ? 'My Bookings' : 'My Assigned Jobs'}</span>
+                      <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#00D2C4]/20 text-[#00D2C4]">
+                        {user.totalBookings || 2}
+                      </span>
+                    </button>
+
+                    <a
+                      href="#trust-safety"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-left cursor-pointer"
+                    >
+                      <ShieldCheck size={14} className="text-[#00D2C4]" />
+                      <span>Trust & Safety</span>
+                    </a>
+
+                    <div className="my-1 border-t border-slate-100 dark:border-slate-800/80" />
+
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        removeStoredUser();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors text-left cursor-pointer"
+                    >
+                      <LogOut size={14} />
+                      <span>Log out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsLoginModalOpen(true)}
+                className={`text-sm font-semibold px-3.5 sm:px-4 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer ${
+                  isScrolled
+                    ? 'text-slate-700 dark:text-slate-300 hover:text-[#00D2C4] hover:bg-slate-100 dark:hover:bg-slate-800'
+                    : 'text-white/90 hover:text-white hover:bg-white/10'
+                }`}
+                aria-label="Login to account"
+              >
+                Login
+              </button>
+            )}
 
             <a
               href="#footer-download"
@@ -176,6 +306,10 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Login & Bookings Modals */}
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
+      <BookingsModal isOpen={isBookingsModalOpen} onClose={() => setIsBookingsModalOpen(false)} user={user} />
     </header>
   );
 }

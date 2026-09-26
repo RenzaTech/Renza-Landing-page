@@ -160,7 +160,15 @@ d:/Renza Landing Page/
     * Text switches to dark text (`#071313`) in light mode and white in dark mode.
 * Features:
   - Interactive Theme Toggle (Sun/Moon icons) with localStorage sync.
-  - Login action button.
+  - Functional Login modal trigger (`components/auth/LoginModal.tsx`):
+    * Customer & Helper Partner role switching tabs.
+    * Indian 10-digit mobile number entry (+91).
+    * Instant 1-click Quick Demo fill for Customer (Aswin) and Helper (Priya).
+    * 4-digit OTP verification screen with auto-focus advance, countdown timer, and paste support.
+    * Authenticated user session persistence via `localStorage ('renza_auth_user')`.
+  - Logged-in Profile Dropdown:
+    * Dynamic user avatar with green active status dot and name.
+    * Dropdown with account type badge, "My Bookings" modal trigger (`components/auth/BookingsModal.tsx`), and one-click "Log out".
   - "Download Renza" primary CTA with hover arrow animation (links to #footer-download).
 
 3.3 HERO SECTION (`components/Hero/Hero.tsx`)
