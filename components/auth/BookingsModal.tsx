@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Calendar, Clock, MapPin, CheckCircle2, ShieldCheck, User as UserIcon } from 'lucide-react';
 import { User } from '@/lib/auth';
 
@@ -61,14 +62,20 @@ const SAMPLE_HELPER_JOBS = [
 ];
 
 export default function BookingsModal({ isOpen, onClose, user }: BookingsModalProps) {
-  if (!isOpen || !user) return null;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !user || !mounted) return null;
 
   const isCustomer = user.role === 'customer';
   const items = isCustomer ? SAMPLE_CUSTOMER_BOOKINGS : SAMPLE_HELPER_JOBS;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#071313]/70 backdrop-blur-md transition-opacity duration-300 animate-in fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 animate-in fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -173,6 +180,7 @@ export default function BookingsModal({ isOpen, onClose, user }: BookingsModalPr
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
