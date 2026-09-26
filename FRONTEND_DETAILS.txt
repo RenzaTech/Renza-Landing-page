@@ -1,0 +1,382 @@
+================================================================================
+                         RENZA LANDING PAGE
+                 FRONTEND ARCHITECTURE & SPECIFICATION
+================================================================================
+
+PROJECT:           RENZA - On-Demand Household Help Platform
+VERSION:           0.1.0
+FRAMEWORK:         Next.js 14.2.29 (App Router)
+LANGUAGE:          TypeScript 5.x
+STYLING:           Tailwind CSS 3.4.1 + Custom CSS Variables
+ANIMATION ENGINE:  GSAP 3.12.5 (GreenSock) + ScrollTrigger Plugin
+ICONS:             Lucide React (0.441.0)
+FONT FAMILY:       Poppins (Google Fonts via next/font/google)
+PRIMARY BRAND:     #00D2C4 (Electric Cyan / Turquoise)
+DARK BG:           #071313 / #070F0F / #0B1717
+LIGHT BG:          #FFFFFF / #F7FAF9
+LAST UPDATED:      September 2026
+
+================================================================================
+1. DESIGN SYSTEM & VISUAL IDENTITY
+================================================================================
+
+1.1 COLOR PALETTE
+-----------------
+* Primary Brand:       #00D2C4 (Vibrant Turquoise / Electric Cyan)
+* Primary Dark (Hover):#00B8AB
+* Primary Light:       rgba(0, 210, 196, 0.12)
+* Dark Background:     #071313 (Hero & Splash Dark Theme)
+* Dark Secondary:      #102323
+* Dark Card Base:      #0C1818 / #0D1B1B
+* Dark Border:         #1E2E2E
+* Light Background:    #FFFFFF / #F7FAF9
+* Light Text Primary:  #101818
+* Light Text Muted:    #647474
+* Light Border:        #E2ECEB
+
+1.2 TYPOGRAPHY SCALE (POPPINS)
+------------------------------
+* Font Family:         var(--font-poppins), 'Poppins', sans-serif
+* Hero Headline:       44px - 78px (Font weight 700 / Bold, leading 1.04)
+* Section Headings:    32px - 60px (Font weight 800 / ExtraBold, tracking-tight)
+* Section Subtitles:   15px - 18px (Font weight 400 / Normal, text-secondary)
+* Card Titles:         16px - 20px (Font weight 700 / Bold)
+* Monospace Accents:   Monospace / Tabular numbers for steps ('01' to '06')
+
+1.3 GLASSMORPHISM & EFFECTS
+---------------------------
+* Top Navigation:      rgba(7, 19, 19, 0.18) with backdrop-filter: blur(8px)
+* Booking Bar:         rgba(255, 255, 255, 0.95) with backdrop-blur-md, rounded-[20px]
+* 3D Cards:            perspective(1200px), transform-style: preserve-3d
+* Atmospheric Glows:   rgba(0, 210, 196, 0.08) with blur-[120px] to blur-[140px]
+* Gradient Text:       linear-gradient(135deg, #00D2C4 0%, #00B8AB 100%)
+
+1.4 THEME ENGINE
+----------------
+* Mechanism:           Tailwind 'class' mode (`<html class="dark">` or `<html class="">`)
+* Persistence:         Stored in browser localStorage under key 'renza-theme'
+* System Sync:         Automatic fallback to `window.matchMedia('(prefers-color-scheme: dark)')`
+
+================================================================================
+2. PROJECT STRUCTURE & DIRECTORY TREE
+================================================================================
+
+d:/Renza Landing Page/
+│
+├── app/
+│   ├── layout.tsx                 # Root layout, HTML skeleton, Poppins font injection
+│   ├── page.tsx                   # Main Landing Page rendering order
+│   └── globals.css                # Global Tailwind directives, CSS variables, utility layers
+│
+├── components/
+│   ├── splash/
+│   │   └── SplashScreen.tsx       # Initial cinematic page entrance loader & transition
+│   │
+│   ├── Navbar.tsx                 # Floating top navbar (dark/light switch, navigation, CTAs)
+│   │
+│   ├── Hero/
+│   │   ├── Hero.tsx               # Full-screen photographic carousel & hero orchestration
+│   │   ├── HeroBookingBar.tsx     # Centered interactive booking/search container
+│   │   ├── HeroCarouselControls.tsx # Minimal numerical & progress indicator
+│   │   ├── heroData.ts            # 6 household scene definitions & photographic metadata
+│   │   ├── HeroContent.tsx        # Extracted hero text content
+│   │   ├── HeroImageStage.tsx     # Hero photography stage container
+│   │   ├── HeroScene.tsx          # Single scene slide renderer
+│   │   └── index.ts               # Barrel export for Hero module
+│   │
+│   ├── TrustStats.tsx             # 4-metric statistics ribbon (₹199/hr, verified, on-demand)
+│   ├── Services.tsx               # "Our Services" grid with 6 core household services
+│   ├── HowItWorks.tsx             # "How It Works" 4-step progressive timeline
+│   ├── WhyRenza.tsx               # "Why RENZA" compact S-curve timeline with 3D flip cards
+│   ├── TrustSafety.tsx            # "Trust & Safety" 6-pillar trust ecosystem
+│   ├── Benefits.tsx               # "Customer Benefits" 4-card convenience showcase
+│   ├── CTA.tsx                    # Full-width high-contrast ready-to-book banner
+│   ├── FAQ.tsx                    # "Frequently Asked Questions" interactive accordion
+│   ├── Footer.tsx                 # Footer branding, sitemap, legal, copyright
+│   │
+│   ├── animations/
+│   │   └── AnimatedBackground.tsx # Unified ambient background animation manager
+│   │
+│   ├── background/
+│   │   ├── AnimatedBackground.tsx # Multi-theme background orchestrator
+│   │   ├── BackgroundGlow.tsx     # Ambient radial glows
+│   │   ├── BackgroundOrbs.tsx     # Floating organic light spheres
+│   │   ├── BackgroundParticles.tsx# Ambient dust/glow motes
+│   │   ├── BackgroundPaths.tsx    # Flowing SVG curves
+│   │   ├── DarkBackground.tsx     # Dark section atmospheric system
+│   │   ├── LightBackground.tsx    # Light section subtle motion system
+│   │   └── TurquoiseBackground.tsx# Brand cyan accent background
+│   │
+│   └── ui/
+│       ├── Button.tsx             # Reusable button component
+│       └── SectionHeading.tsx     # Reusable typography heading with gradient highlights
+│
+├── lib/
+│   └── utils.ts                   # cn() helper merging clsx and tailwind-merge
+│
+├── public/
+│   └── images/                    # Photographic imagery
+│       ├── renza-cleaning.jpg     # Scene 01: House cleaning
+│       ├── renza-kitchen.jpg      # Scene 02: Kitchen & vessel washing
+│       ├── renza-laundry.jpg      # Scene 03: Laundry assistance
+│       ├── renza-booking.jpg      # Scene 04: Mobile on-demand booking
+│       ├── renza-helper-1.jpg     # Scene 05: Verified helper arriving
+│       ├── renza-trust.jpg        # Scene 06: Service completed & customer trust
+│       └── ...
+│
+├── tailwind.config.ts             # Tailwind design tokens, animations, fonts, shadows
+├── tsconfig.json                  # TypeScript compiler settings & path aliases (@/*)
+├── package.json                   # Dependencies, scripts, package metadata
+└── next.config.mjs / next.config.js # Next.js compilation config
+
+================================================================================
+3. COMPONENT ARCHITECTURE & INTERACTION DETAILS
+================================================================================
+
+3.1 SPLASH SCREEN (`components/splash/SplashScreen.tsx`)
+-------------------------------------------------------
+* Purpose: Provides a cinematic first-load brand reveal without flashing unstyled content.
+* Logic:
+  - Checks `sessionStorage.getItem('renza_intro_seen')`.
+  - If seen, skips animation immediately and displays the page.
+  - If first visit:
+    1. Dark background overlay `#071313` covers viewport (z-index 9999).
+    2. RENZA 'R' logo mark scales in with back.out(1.5).
+    3. Turquoise progress line scales from 0% to 100% over 1.2s.
+    4. At 1.70s, dispatches `window.dispatchEvent(new CustomEvent('renza_splash_reveal'))`.
+    5. Splash screen wipes upwards with power4.inOut, revealing the hero.
+    6. Sets `sessionStorage.setItem('renza_intro_seen', 'true')`.
+
+3.2 NAVBAR (`components/Navbar.tsx`)
+------------------------------------
+* Layout: Fixed header floating at the top of the viewport (`fixed top-0 left-0 right-0 z-50`).
+* States:
+  - At top of page (`!isScrolled`):
+    * Background: `bg-[#071313]/[0.18]` with `backdrop-blur-[8px]` and `border-b border-white/10`.
+    * Typography: Crisp pure white text (`text-white`), logo in white.
+    * Theme switch: Glassmorphic white button.
+  - Scrolled down (`isScrolled` > 40px):
+    * Smoothly transitions via duration-500 to solid blurred surface (`bg-white/95 dark:bg-[#071313]/95 shadow-sm`).
+    * Text switches to dark text (`#071313`) in light mode and white in dark mode.
+* Features:
+  - Interactive Theme Toggle (Sun/Moon icons) with localStorage sync.
+  - Login action button.
+  - "Download Renza" primary CTA with hover arrow animation (links to #footer-download).
+
+3.3 HERO SECTION (`components/Hero/Hero.tsx`)
+---------------------------------------------
+* Composition: Full viewport edge-to-edge layout (`100svh`, min-h-[680px], overflow-hidden).
+* Layers:
+  1. Layer 1 (Carousel Stage): 6 full-bleed photographic scenes from `public/images/`.
+     - Next.js Image with `fill`, `sizes="100vw"`, `priority={idx < 2}`.
+     - Active slide has Ken-Burns continuous zoom (`scale: 1.0 -> 1.04` over 5.5s).
+     - Transitions: Outgoing slide drifts (`scale: 1.05`, `x: -30px`, opacity fade).
+       Incoming slide wipes via `clip-path: inset(0% 0% 0% 100%) -> inset(0% 0% 0% 0%)`,
+       `scale: 1.08 -> 1.0`, `x: 40px -> 0` over 1.5s with GSAP `power4.inOut`.
+  2. Layer 2 (Atmosphere): 3 large blurred turquoise light orbs (`rgba(0, 210, 196, 0.08)`, blur-3xl).
+     - Ambient drift animation over 18-22s (`yoyo: true, repeat: -1`).
+  3. Layer 3 (Readability Gradient):
+     - Linear top-to-bottom dark gradient (`rgba(7, 19, 19, 0.75)` to `0.85`).
+     - Center radial vignette (`radial-gradient(ellipse at 50% 48%, rgba(7, 19, 19, 0.35) 0%, rgba(7, 19, 19, 0.78) 100%)`).
+  4. Layer 4 (Centered Typography & Booking Bar):
+     - Headline: "Household help, whenever you need it." with "whenever you need it." in `#00D2C4`.
+     - Description: "Book a trained and verified RENZA Helper for cleaning, laundry, kitchen work and everyday household tasks."
+     - Booking Bar (`HeroBookingBar.tsx`):
+       * Max width 760px, rounded-[20px], `bg-white/95`, backdrop-blur-md, soft 3D shadow.
+       * Left: Location selector with MapPin in `#00D2C4`, "Kundrathur, Chennai", and Chennai area dropdown (Kundrathur, Avadi, Egmore, T. Nagar, Anna Nagar, Velachery, Adyar, Porur, Tambaram, Nungambakkam).
+       * Center: Search input with Search icon: "What household help do you need?".
+       * Far Right: Turquoise CTA button (`#00D2C4`) with ArrowRight (slides `x: 0 -> 4px` on hover).
+* Desktop Mouse Parallax:
+  - Implemented via `gsap.quickTo` on desktop devices (`window.innerWidth >= 1024` with fine pointer).
+  - Displacements: Background photo (±8px), Dark overlay (±4px), Atmospheric lights (±2px).
+  - Automatically disabled on mobile/touch devices and under `prefers-reduced-motion`.
+
+3.4 TRUST STATS (`components/TrustStats.tsx`)
+---------------------------------------------
+* Layout: 4-column metric ribbon below the hero.
+* Metrics:
+  1. `₹199 /hr` - Simple Hourly Pricing (No complicated fees)
+  2. `Verified` - Helpers (Screened & onboarded)
+  3. `On-Demand` - Booking (Book when you need it)
+  4. `Reliable` - Household Help (For everyone)
+* Animation: GSAP ScrollTrigger staggered entrance (`y: 30 -> 0`, `opacity: 0 -> 1`).
+
+3.5 OUR SERVICES (`components/Services.tsx`)
+--------------------------------------------
+* Heading: "Our Services" (`text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight`) with "Services" highlighted in turquoise.
+* Description: "Book a RENZA Helper for everyday household assistance without the commitment of hiring a permanent maid."
+* 6 Interactive 3D Flip Service Cards:
+  1. House Cleaning (Floor sweeping, mopping, vacuuming, dusting, balcony cleaning)
+  2. Vessel Washing (Hand washing pots & pans, sink sanitization, cabinet stacking)
+  3. Laundry Assistance (Washing machine loading, neat folding, linen & wardrobe care)
+  4. Kitchen Cleaning (Counter degreasing, stove & chimney wipe-down, appliance care)
+  5. Room Cleaning (Bed sheet changing, furniture wiping, glass cleaning, room tidying)
+  6. Household Assistance (Grocery sorting, pantry organization, flexible chores)
+* Card Interaction:
+  - Front Face: Service icon, rate badge (₹199/hr), bold title, clean summary description. (No "Learn more ->" button).
+  - Back Face: 3D 180° flip reveal showing "What's Included" task checklist with checkmarks and direct "Book This Service" CTA.
+  - Interactive: Hover 3D flip on desktop, tap/click flip on mobile & touchscreens.
+
+3.6 HOW IT WORKS (`components/HowItWorks.tsx`)
+----------------------------------------------
+* Heading: "How It Works" with "Works" in turquoise gradient.
+* Description: "Four easy steps to get reliable household help whenever you need it."
+* 4-Step Process:
+  - Step 01: Choose a Service (Select household task from available services)
+  - Step 02: Choose Your Time (Select date & duration fitting your schedule)
+  - Step 03: Get Your RENZA Helper (Assigned trained & verified helper)
+  - Step 04: Get It Done (Helper arrives and completes requested work)
+* Connecting Line: Animated SVG line across steps that fills from left to right on scroll.
+
+3.7 WHY RENZA (`components/WhyRenza.tsx`)
+-----------------------------------------
+* Heading: "Why RENZA" in bold big font with "RENZA" highlighted in `#00D2C4`.
+* Description: "Everything you need to know about why thousands choose RENZA over traditional domestic help."
+* Layout: Alternating Zig-Zag / S-Curved Serpentine Timeline.
+  - S-Curve Line: SVG cubic bezier curve connecting the cards (`viewBox="0 0 100 800"`).
+    * S-line dynamically draws from 0% to 100% via GSAP ScrollTrigger `strokeDashoffset`.
+    * Weaves left to Card 1, right to Card 2, left to Card 3, right to Card 4, left to Card 5, right to Card 6.
+  - Milestone Nodes: Pulsing cyan anchor dots down the center.
+* Interactive 3D Flip Cards (Front & Back):
+  - Card 01: Verified Helpers (100% background screened, Aadhaar checked)
+  - Card 02: Trained Helpers (Skill certified, standardized cleaning SOPs)
+  - Card 03: Simple Hourly Pricing (From ₹199/hr, zero hidden charges)
+  - Card 04: No Permanent Commitment (Zero lock-in, no maid leave stress)
+  - Card 05: Easy Booking (< 60s booking, instant confirmation)
+  - Card 06: RENZA Managed (Full customer care & replacement support)
+* Compact Dimensions:
+  - Card height: 135px–140px.
+  - Spacing: space-y-4 md:space-y-5.
+  - Front & back faces stripped of redundant badges and footers for a sleek, compact visual.
+  - Flips smoothly 180° on hover or tap/click.
+
+3.8 TRUST & SAFETY (`components/TrustSafety.tsx`)
+-------------------------------------------------
+* Heading: "Trust & Safety" with "Safety" highlighted in turquoise.
+* Description: "RENZA manages the helper lifecycle — from onboarding and training to the service experience — so you don't have to."
+* 6 Safety Pillars:
+  1. Identity Verification (Aadhaar & identity checks)
+  2. Helper Screening (Multi-stage vetting process)
+  3. Training (Household protocol certification)
+  4. Service Guidelines (Clear conduct and quality rules)
+  5. Customer Support (Dedicated customer assistance)
+  6. Booking Records (Digital records for full transparency)
+
+3.9 CUSTOMER BENEFITS (`components/Benefits.tsx`)
+-------------------------------------------------
+* Heading: "Customer Benefits" with "Benefits" in turquoise.
+* Description: "RENZA is designed for anyone who needs reliable household help — on their own schedule."
+* 4 Convenience Scenarios (Minimalist clean cards without background watermark numbers):
+  - 1: Need help occasionally? (No lock-in, no recurring cost)
+  - 2: Don't want a permanent maid? (Temporary help without permanent management)
+  - 3: Busy with everyday life? (Focus on what matters most)
+  - 4: Need extra help? (Book additional hours whenever required)
+
+3.10 CALL TO ACTION (`components/CTA.tsx`)
+------------------------------------------
+* Heading: "Your household. Your schedule. Your RENZA Helper."
+* Styling: Bold large typography (`text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight`).
+* Card Surface: Dark gradient (`from-[#0B1717] to-[#102323]`) with radial turquoise ambient light.
+* Actions: Primary "Book a Helper" button (shadow-turquoise) + secondary "Explore Services" glass button.
+* Tagline: "Trained helpers · Verified · On-demand · Starting at ₹199/hour".
+
+3.11 FREQUENTLY ASKED QUESTIONS (`components/FAQ.tsx`)
+------------------------------------------------------
+* Heading: "Frequently Asked Questions" with "Questions" highlighted in turquoise.
+* Description: "Everything you need to know about RENZA. Can't find your answer? Contact our support team."
+* Accordion System:
+  - Single-active accordion state.
+  - Smooth height expansion with animated rotating Chevron icon.
+  - Covers topics: booking lead time, cancellation policy, pricing breakdown, helper safety, task flexibility.
+
+3.12 FOOTER (`components/Footer.tsx`)
+-------------------------------------
+* 5-Column Grid Layout:
+  - Column 1: Brand identity, logo mark, and elevator pitch.
+  - Column 2: Company links (About RENZA, How It Works, Services, Contact).
+  - Column 3: Support links (Help Center, FAQs, Customer Support, Safety).
+  - Column 4: Legal links (Privacy Policy, Terms & Conditions, Cancellation Policy).
+  - Column 5 (`#footer-download`):
+    * Heading: "SOCIAL LINKS" (uppercase, clean sans-serif tracking).
+    * Circular Social Badges: Facebook, Twitter, and Instagram with dark circular pill background, brand turquoise hover fill, and subtle scale-up animation.
+    * Mobile App Store Badges:
+      - Apple App Store Badge: Apple silhouette SVG + "Download on the App Store" typography.
+      - Google Play Badge: Official 4-color Google Play triangular logo + "GET IT ON Google Play" typography.
+* Bottom Bar:
+  - Copyright statement: "© 2026 RENZA. All rights reserved."
+  - Heart statement: "Made with ♥ for households everywhere".
+
+================================================================================
+4. ANIMATION SYSTEM ARCHITECTURE
+================================================================================
+
+4.1 GSAP PLUGINS & REGISTRATION
+-------------------------------
+* Registered plugin: `gsap.registerPlugin(ScrollTrigger)`
+* Client-Side Guard: `if (typeof window !== 'undefined')` ensures server-side rendering (SSR) safety.
+* Cleanup Pattern: Every GSAP animation is scoped inside `gsap.context((self) => { ... }, containerRef)` and returned in `return () => ctx.revert()`. This guarantees zero memory leaks during page navigation or Hot Module Reloading (HMR).
+
+4.2 ANIMATION CATEGORIES
+------------------------
+1. Cinematic Carousel Transitions:
+   - incoming slide: `clipPath: inset(0% 0% 0% 100%) -> inset(0% 0% 0% 0%)`, `scale: 1.08 -> 1.0`, `x: 40px -> 0`, `opacity: 0 -> 1` over 1.5s (`power4.inOut`).
+   - outgoing slide: `scale: 1.05`, `x: -30px`, opacity fade over 1.4s.
+   - Ken-Burns zoom: `scale: 1.0 -> 1.04` over 5.5s (`sine.out`).
+2. Mouse Parallax Engine:
+   - Uses `gsap.quickTo` for 60fps hardware-accelerated pointer tracking on desktop.
+   - Computes relative pointer coordinates `relX = (clientX - rect.left) / width - 0.5`.
+3. SVG ScrollTrigger Path Drawing:
+   - Dynamically calculates `getTotalLength()`.
+   - Scrubs `strokeDashoffset` from `pathLength` down to `0` based on scroll progress.
+4. 3D Flip Card Transitions:
+   - CSS 3D transforms (`rotateY(180deg)`) coupled with GSAP scroll-triggered stagger entrance.
+
+================================================================================
+5. BUILD & RUNTIME SPECIFICATION
+================================================================================
+
+5.1 PACKAGE DEPENDENCIES (`package.json`)
+-----------------------------------------
+Dependencies:
+- next: "14.2.29"
+- react: "^18"
+- react-dom: "^18"
+- gsap: "^3.12.5"
+- lucide-react: "^0.441.0"
+- clsx: "^2.1.1"
+
+DevDependencies:
+- typescript: "^5"
+- tailwindcss: "^3.4.1"
+- postcss: "^8"
+- autoprefixer: "^10.0.1"
+- eslint: "^8"
+- eslint-config-next: "14.2.29"
+- @types/node: "^20"
+- @types/react: "^18"
+- @types/react-dom: "^18"
+
+5.2 NPM SCRIPTS
+---------------
+- `npm run dev`: Starts local development server on http://localhost:3000
+- `npm run build`: Generates production-optimized build with static page prerendering (SSG)
+- `npm run start`: Runs the production-optimized Next.js server
+- `npm run lint`: Performs ESLint syntax and code-style validation
+
+================================================================================
+6. ACCESSIBILITY & PERFORMANCE STANDARDS
+================================================================================
+
+* Reduced Motion: Respects user preference `(prefers-reduced-motion: reduce)`. Replaces clip-path wipes and parallax with gentle cross-fades and disables continuous zoom.
+* Semantic HTML: Valid HTML5 structure using `<header role="navigation">`, `<main id="landing-page-content">`, `<section aria-labelledby="...">`, `<button>`, `<svg>`, `<nav>`, `<footer>`.
+* Image Optimization: Next.js `<Image>` component utilizing modern WebP formats, responsive `sizes="100vw"`, explicit image dimensions, and priority flags on critical above-the-fold assets.
+* Zero Layout Shifts (CLS): High-priority hero image containers, fixed heights for carousel stages, and aspect-ratio preservation prevent Cumulative Layout Shifts.
+* Responsive Breakpoints:
+  - Mobile:      < 640px (compact stacked inputs, 100svh hero, vertical timeline)
+  - Tablet:      640px - 1023px (2-column grids)
+  - Desktop:     >= 1024px (full alternating S-curve, mouse parallax, 3-column grids)
+  - Ultrawide:   >= 1280px (constrained via container-renza max-w-7xl)
+
+================================================================================
+                              END OF SPECIFICATION
+================================================================================
