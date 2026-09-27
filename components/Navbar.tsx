@@ -158,21 +158,21 @@ export default function Navbar() {
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="container-renza">
-        <div className="flex items-center justify-between">
+      <div className="container-renza px-3.5 sm:px-6">
+        <div className="flex items-center justify-between gap-2">
           {/* Brand Logo */}
           <a
             id="renza-nav-logo"
             href="#home"
             onClick={handleLogoClick}
-            className="flex items-center gap-2.5 group cursor-pointer"
+            className="flex items-center gap-2 sm:gap-2.5 group cursor-pointer shrink-0"
             aria-label="RENZA Home"
           >
-            <div className="w-9 h-9 rounded-xl bg-[#00D2C4] flex items-center justify-center shadow-md shadow-[#00D2C4]/25 group-hover:scale-105 transition-transform duration-300">
-              <span className="text-white font-bold text-lg leading-none">R</span>
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#00D2C4] flex items-center justify-center shadow-md shadow-[#00D2C4]/25 group-hover:scale-105 transition-transform duration-300 shrink-0">
+              <span className="text-white font-bold text-base sm:text-lg leading-none">R</span>
             </div>
             <span
-              className={`text-xl font-bold tracking-tight transition-colors duration-300 ${
+              className={`text-lg sm:text-xl font-bold tracking-tight transition-colors duration-300 whitespace-nowrap shrink-0 ${
                 isScrolled ? 'text-[#071313] dark:text-white' : 'text-white'
               }`}
             >
@@ -181,47 +181,47 @@ export default function Navbar() {
           </a>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <button
               onClick={toggleTheme}
               aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-              className={`p-2.5 rounded-xl transition-all duration-200 cursor-pointer shadow-sm ${
+              className={`p-2 sm:p-2.5 rounded-xl transition-all duration-200 cursor-pointer shadow-sm shrink-0 ${
                 isScrolled
                   ? 'border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:border-[#00D2C4] hover:text-[#00D2C4]'
                   : 'border border-white/15 bg-white/10 backdrop-blur-md text-white hover:border-[#00D2C4] hover:text-[#00D2C4]'
               }`}
             >
               {mounted && theme === 'dark' ? (
-                <Sun size={18} className="text-amber-400" />
+                <Sun size={16} className="text-amber-400 sm:w-[18px] sm:h-[18px]" />
               ) : (
-                <Moon size={18} className={isScrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'} />
+                <Moon size={16} className={`sm:w-[18px] sm:h-[18px] ${isScrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'}`} />
               )}
             </button>
 
             {/* Login or User Profile */}
             {user ? (
-              <div ref={profileMenuRef} className="relative">
+              <div ref={profileMenuRef} className="relative shrink-0">
                 <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                   aria-expanded={isProfileMenuOpen}
                   aria-haspopup="true"
-                  className={`flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 cursor-pointer shadow-sm ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border transition-all duration-200 cursor-pointer shadow-sm ${
                     isScrolled
                       ? 'border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 hover:border-[#00D2C4]'
                       : 'border-white/20 bg-white/10 backdrop-blur-md text-white hover:border-[#00D2C4]'
                   }`}
                   aria-label="User profile menu"
                 >
-                  <div className="relative w-6 h-6 rounded-full bg-[#00D2C4] text-[#071313] font-bold text-xs flex items-center justify-center">
+                  <div className="relative w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#00D2C4] text-[#071313] font-bold text-[10px] sm:text-xs flex items-center justify-center shrink-0">
                     {user.name.charAt(0).toUpperCase()}
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-white dark:border-[#071313]" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 border border-white dark:border-[#071313]" />
                   </div>
-                  <span className="text-xs sm:text-sm font-semibold max-w-[80px] sm:max-w-[110px] truncate">
+                  <span className="text-xs sm:text-sm font-semibold max-w-[55px] min-[400px]:max-w-[80px] sm:max-w-[110px] truncate">
                     {user.name.split(' ')[0]}
                   </span>
                   <ChevronDown
-                    size={14}
-                    className={`text-slate-400 transition-transform duration-200 ${
+                    size={12}
+                    className={`text-slate-400 transition-transform duration-200 shrink-0 ${
                       isProfileMenuOpen ? 'rotate-180' : ''
                     }`}
                   />
@@ -284,7 +284,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => setIsLoginModalOpen(true)}
-                className={`text-sm font-semibold px-3.5 sm:px-4 py-2.5 rounded-xl transition-colors duration-200 cursor-pointer ${
+                className={`text-xs sm:text-sm font-semibold px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 ${
                   isScrolled
                     ? 'text-slate-700 dark:text-slate-300 hover:text-[#00D2C4] hover:bg-slate-100 dark:hover:bg-slate-800'
                     : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -297,11 +297,13 @@ export default function Navbar() {
 
             <a
               href="#footer-download"
-              className="inline-flex items-center gap-2 bg-[#00D2C4] hover:bg-[#00b8ab] text-[#071313] font-semibold text-sm px-4 sm:px-5 py-2.5 rounded-xl shadow-md shadow-[#00D2C4]/20 hover:shadow-[#00D2C4]/35 transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#00D2C4] hover:bg-[#00b8ab] text-[#071313] font-semibold text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md shadow-[#00D2C4]/20 hover:shadow-[#00D2C4]/35 transition-all duration-300 cursor-pointer whitespace-nowrap shrink-0"
               aria-label="Download Renza"
             >
-              <span>Download Renza</span>
-              <ArrowRight size={15} />
+              <span>
+                Download<span className="hidden min-[400px]:inline"> Renza</span>
+              </span>
+              <ArrowRight size={14} className="sm:w-[15px] sm:h-[15px] shrink-0" />
             </a>
           </div>
         </div>
